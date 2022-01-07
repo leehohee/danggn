@@ -107,7 +107,7 @@
             <v-bottom-navigation
             v-model="value"
             absolute
-            class="white pa-5"
+            class="white pa-4"
             :style="{boxShadow: '0 -1.5px 0 0 rgb(0 0 0 / 10%)',paddingRight:'5vw',paddingLeft:'3vw',position:'fixed', top: 'calc(100vh - 56px)',zIndex:'100', width:'100%'}"
             grow
             

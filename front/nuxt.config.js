@@ -113,7 +113,7 @@ module.exports = {
     },
     server:{
         port: process.env.PORT || 2525,
-        // host: '0.0.0.0'
+        host: '0.0.0.0',
     },
     
 };

@@ -40,7 +40,7 @@
                         elevation="0"
                         @click="toggle"
                         
-                        nuxt to="/detailpage"
+                        nuxt to="/"
                         >
                         
                             <v-list-item dense class="px-1 my-0" two-line>
@@ -86,9 +86,9 @@
                 <v-card
                     :color="item.color"
                     max-height="98"
-                    class="pa-0 ma-0"
+                    
                     elevation="0"
-                    nuxt to="/detailpage"
+                    nuxt to="/"
                 >
                     <div class="d-flex flex-no-wrap">
 

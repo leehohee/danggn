@@ -129,7 +129,7 @@
         v-model="value"
         absolute
         
-        class="white pt-4"
+        class="white pt-3"
         :style="{
           boxShadow: '0 -1.5px 0 0 rgb(0 0 0 / 10%)',
           paddingRight: '5vw',

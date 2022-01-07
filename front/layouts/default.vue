@@ -135,7 +135,7 @@
           paddingRight: '5vw',
           paddingLeft: '3vw',
           position: 'fixed',
-          paddingTop:'5px',
+          paddingTop:'10px',
           top: 'calc(100vh - 56px)',
           zIndex: '100',
           width: '100%',

@@ -107,8 +107,8 @@ module.exports = {
 
     ],
     axios:{
-        browserBaseURL: 'http://localhost:3065',
-        baseURL: 'http://localhost:3065',
+        browserBaseURL: 'http://api.comforde.co.kr',
+        baseURL: 'http://api.comforde.co.kr',
         https: false,
     },
     server:{

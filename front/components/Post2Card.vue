@@ -1,0 +1,119 @@
+<template>
+    <div style="margin-bottom: 20px">
+        <v-card flat>
+            
+            <Post2Content :post="post"/>
+            <v-card-actions>
+                
+                
+                <div style="background:white">
+                    <v-btn dark color="red" @click="onRemovePost">삭제</v-btn>
+                    <v-btn text color="orange" @click="onEditPost">수정</v-btn>
+
+                </div>
+                
+                
+            </v-card-actions>
+        </v-card>
+        <template v-if="commentOpened">
+            <CommentForm :postId="post.id"/>
+            <v-list>
+                <v-list-item v-for="c in post.Comments" :key="c.id">
+                    <v-list-item-avatar>
+                        <span>{{c.User.nickname[0]}}</span>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                        <v-list-item-title>{{c.User.nickname}}</v-list-item-title>
+                        <v-list-item-subtitle>{{c.content}}</v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+        </template>
+    </div>
+</template>
+
+<script>
+import CommentForm from '~/components/CommentForm';
+import Post2Content from '~/components/Post2Content';
+export default {
+    components:{
+        CommentForm,
+        Post2Content,
+    },
+    props: {
+        post: {
+            type: Object,
+            required: true,
+        }
+    },
+    data(){
+        return {
+
+            commentOpened:false,
+        }
+    },
+    computed:{
+        me(){
+            return this.$store.state.users.me;
+        },
+        liked(){
+            const me = this.$store.state.users.me;
+            return !!(this.post.Likers || []).find(v => v.id === (me && me.id));
+        },
+        heartIcon(){
+            
+            return this.liked ? 'mdi-heart' : 'mdi-heart-outline';
+        },
+    },
+    methods: {
+        onRemovePost(){
+            this.$store.dispatch('posts/remove',{
+                postId: this.post.id,
+            })
+        },
+        onEditPost(){
+
+        },
+        onToggleComment(){
+            if(!this.commentOpened){
+                this.$store.dispatch('posts/loadComments',{
+                    postId: this.post.id,
+                });
+            }
+            this.commentOpened = !this.commentOpened;
+        },
+        onRetweet(){
+            if(!this.me){
+                return alert('로그인이 필요합니다.');
+            }
+            this.$store.dispatch('posts/retweet',{
+                postId: this.post.id,
+            });
+        },
+        onClickHeart(){
+            if(!this.me){
+                return alert('로그인이 필요합니다.');
+            }
+            if(this.liked){
+                return this.$store.dispatch('posts/unlikePost', {
+                    postId: this.post.id,
+                });
+            
+            }
+            return this.$store.dispatch('posts/likePost', {
+                    postId: this.post.id,
+            });
+
+        },
+    },
+
+
+};
+</script>
+
+<style scoped>
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+</style>

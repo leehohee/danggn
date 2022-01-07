@@ -1,0 +1,274 @@
+<template>
+    <v-app>
+            
+
+            <v-app-bar
+            class="white"
+            app
+            dense
+            flat
+            outlined
+            justify="space-between"
+            no-gutter
+            :style="{ position:'fixed', top: '0px',zIndex:'100', width:'100%', marginLeft:'0px'}"
+            >
+                
+                    <v-btn v-if="1" @click="goBack" icon :style="{ marginLeft:'0px',paddingLeft:'0px', display:'flex', alignItems: 'center'}">
+                            <v-icon large>mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-btn v-else icon nuxt to="/alarm" :style="{ marginLeft:'0px',paddingLeft:'0px', display:'flex', alignItems: 'center'}">
+                            <v-icon>mdi-bell-outline</v-icon>
+                    </v-btn>
+                    <v-spacer></v-spacer>
+                    
+                    <v-toolbar-title>
+                        
+                        <nuxt-link to="/"><h4>COMFORDE</h4></nuxt-link>
+                        
+                    </v-toolbar-title>
+                    
+                    <v-spacer></v-spacer>
+
+
+
+
+
+
+                    
+                    <v-btn icon @click.stop="drawer = !drawer" :style="{ marginRight:'0px',paddingRight:'0px',display:'flex', alignItems: 'center'}">
+                            <v-icon>mdi-magnify</v-icon>
+                    </v-btn>
+                    
+                    
+                
+            </v-app-bar>
+            
+            <v-navigation-drawer app
+            v-model="drawer"
+            right
+            :style="{zIndex:'100',}"
+            hide-overlay
+            width="100%"
+            clipped
+            >
+                <v-row>
+                    <v-col cols="1"><v-btn class="px-0 mt-1" flat elevation="0" @click.stop="drawer = !drawer"><v-icon large>mdi-chevron-left</v-icon></v-btn></v-col>
+                    <v-col cols="11">
+                        <v-form>
+                            <v-text-field
+                            placeholder="검색어를 입력하세요."
+                            class="pa-0 ml-4"
+                            hide-details="false"
+                            clearable
+                            rounded
+                            >
+
+                            </v-text-field>
+                        </v-form>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col>
+                        <v-container>
+                            <div>추천 검색어</div>
+                            <v-list-item
+                            v-for="i in 10"
+                            :key="i"
+                            dense
+                            >
+                                <v-list-item-icon>
+                                    <v-icon v-text="i"></v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title>디자인</v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-container>
+                        
+
+                    </v-col>
+                </v-row>
+            </v-navigation-drawer>
+            
+
+
+
+            <v-main>
+            <v-col cols="12" md="12">
+
+
+
+
+            <v-fade-transition mode="out-in">        
+            <nuxt />
+            </v-fade-transition>
+
+
+
+
+
+            </v-col>
+            
+            </v-main>
+
+
+                
+            <v-footer app>
+            <v-bottom-navigation
+            v-model="value"
+            absolute
+            class="white"
+            :style="{boxShadow: '0 -1.5px 0 0 rgb(0 0 0 / 10%)',paddingRight:'5vw',paddingLeft:'3vw',position:'fixed', top: 'calc(100vh - 56px)',zIndex:'100', width:'100%'}"
+            grow
+            
+            >
+                <v-btn outlined @click="onClick" value="home" class="white">
+                <span :style="{ fontSize:'1rem'}">문의</span>
+                
+                </v-btn>
+
+
+
+                <v-btn rounded value="home" class="yellow" @click="onClickOrder">
+                <span :style="{ fontSize:'1rem'}">구매</span>
+                
+                </v-btn>
+
+                
+
+                <v-btn @click="onClickHeart" value="user" class="white">
+                
+                <v-icon>{{heartIcon}}</v-icon>
+                </v-btn>
+            </v-bottom-navigation>
+            </v-footer>    
+    </v-app>  
+</template>
+
+<script>
+
+
+export default {
+    components: {
+        
+        
+    },
+    
+    data(){
+        return {
+            hashtag: '',
+            drawer: false,
+            dialog: false,    
+        };
+    },
+    computed: {
+        me(){
+            return this.$store.state.users.me;
+        },
+        mainItems(){
+            return this.$store.state.posts.mainItems.find(v => v.id === parseInt(this.$route.params.id, 10));
+        },
+        liked(){
+            const me = this.$store.state.users.me;
+            return !!(this.mainItems.Itemlikers || []).find(v => v.id === (me && me.id));
+        },
+        heartIcon(){
+            
+            return this.liked ? 'mdi-heart' : 'mdi-heart-outline';
+        },
+    },
+    
+    methods:{
+        onSerachHashtag(){
+            this.$router.push({
+                path: `/hashtag/${encodeURIComponent(this.hashtag)}`,
+            });
+            this.hashtag='';
+        },
+        goBack(){
+            this.$router.go(-1); [2]
+        },
+        onClick(){
+            console.log(this.mainItems.UserId);
+            this.$store.dispatch('posts/makeChatroom', {
+                    receiverId: this.mainItems.UserId,
+                    senderId: this.me.id,
+                })
+                .then(()=>{
+                    this.$router.push({
+                        path: `/chat/${encodeURIComponent(this.mainItems.UserId)}`,
+                    });
+
+                })
+                .catch(()=>{
+                    alert('문의대화생성실패');
+                });;
+            
+        },
+        onClickHeart(){
+            if(!this.me){
+                return alert('로그인이 필요합니다.');
+            }
+            if(this.liked){
+                return this.$store.dispatch('posts/unlikeItem', {
+                    itemId: this.mainItems.id,
+                });
+            
+            }
+            return this.$store.dispatch('posts/likeItem', {
+                    itemId: this.mainItems.id,
+            });
+
+        },
+        onClickOrder(){
+            if(!this.me){
+                return alert('로그인이 필요합니다.');
+            }
+            this.$store.dispatch('posts/makeOrder', {
+                    itemId: this.mainItems.id,
+                    cost:this.mainItems.cost,
+                })
+                .then(()=>{
+                    this.$router.push({
+                        path: `/orderpage/`,
+                    });
+
+                })
+                .catch(()=>{
+                    alert('주문생성실패');
+                });;
+
+        },
+    },
+
+    
+}
+
+</script>
+    
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap');
+
+
+    a {
+        display:inline-block;
+        text-decoration: none;
+        color: inherit;
+    }
+    ul {
+        text-decoration: none;
+        list-style: none;
+    }
+    li {
+        text-decoration: none;
+    }
+    h4 {
+        
+        font-weight: 500;
+    }
+    
+
+
+   
+</style>
